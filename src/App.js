@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { AppProvider } from './context/AppContext';
+import PageTransition from './components/PageTransition';
+import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import CustomizationPage from './pages/CustomizationPage';
 import HomePage from './pages/HomePage';
@@ -9,8 +11,12 @@ import ProfilePage from './pages/ProfilePage';
 import './App.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('login');
+  const [currentPage, setCurrentPage] = useState('landing');
   const [selectedArtist, setSelectedArtist] = useState(null);
+
+  const handleGetStarted = () => {
+    setCurrentPage('login');
+  };
 
   const handleLogin = () => {
     setCurrentPage('customization');
@@ -24,9 +30,6 @@ function App() {
     setCurrentPage('explore');
   };
 
-  const handleNavigateToCategoryExplore = () => {
-    setCurrentPage('categoryExplore');
-  };
 
   const handleArtistClick = (artist) => {
     setSelectedArtist(artist);
@@ -45,29 +48,63 @@ function App() {
 
   const renderCurrentPage = () => {
     switch (currentPage) {
+      case 'landing':
+        return (
+          <PageTransition isActive={true} transitionKey="landing">
+            <LandingPage onGetStarted={handleGetStarted} />
+          </PageTransition>
+        );
       case 'login':
-        return <LoginPage onLogin={handleLogin} />;
+        return (
+          <PageTransition isActive={true} transitionKey="login">
+            <LoginPage onLogin={handleLogin} />
+          </PageTransition>
+        );
       case 'customization':
-        return <CustomizationPage onComplete={handleCustomizationComplete} />;
+        return (
+          <PageTransition isActive={true} transitionKey="customization">
+            <CustomizationPage onComplete={handleCustomizationComplete} />
+          </PageTransition>
+        );
       case 'home':
-        return <HomePage 
-          onNavigateToExplore={handleNavigateToExplore} 
-          onArtistClick={handleArtistClick}
-        />;
+        return (
+          <PageTransition isActive={true} transitionKey="home">
+            <HomePage 
+              onNavigateToExplore={handleNavigateToExplore} 
+              onArtistClick={handleArtistClick}
+            />
+          </PageTransition>
+        );
       case 'explore':
-        return <ExplorePage onBack={handleBackToHome} />;
+        return (
+          <PageTransition isActive={true} transitionKey="explore">
+            <ExplorePage onBack={handleBackToHome} />
+          </PageTransition>
+        );
       case 'categoryExplore':
-        return <CategoryExplorePage 
-          onBack={handleBackToHome}
-          onArtistClick={handleArtistClick}
-        />;
+        return (
+          <PageTransition isActive={true} transitionKey="categoryExplore">
+            <CategoryExplorePage 
+              onBack={handleBackToHome}
+              onArtistClick={handleArtistClick}
+            />
+          </PageTransition>
+        );
       case 'profile':
-        return <ProfilePage 
-          kreative={selectedArtist}
-          onBack={handleBackToCategoryExplore}
-        />;
+        return (
+          <PageTransition isActive={true} transitionKey="profile">
+            <ProfilePage 
+              kreative={selectedArtist}
+              onBack={handleBackToCategoryExplore}
+            />
+          </PageTransition>
+        );
       default:
-        return <LoginPage onLogin={handleLogin} />;
+        return (
+          <PageTransition isActive={true} transitionKey="landing">
+            <LandingPage onGetStarted={handleGetStarted} />
+          </PageTransition>
+        );
     }
   };
 

@@ -1,0 +1,25 @@
+/* Page Transition Styles */
+.page-transition {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.page-transition.page-enter {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.page-transition.page-exit {
+  opacity: 0;
+  transform: translateY(-20px) scale(1.02);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Smooth page container */
+.page-container {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}

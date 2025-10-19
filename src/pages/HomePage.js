@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import BlogModal from '../components/BlogModal';
+import BackgroundAnimations from '../components/BackgroundAnimations';
 import { blogContent } from '../data/blogContent';
 import './HomePage.css';
 
@@ -27,6 +28,37 @@ const HomePage = ({ onNavigateToExplore, onArtistClick }) => {
     }
   }, [state.kreatives]);
 
+  // Get recommended kreatives based on user preferences
+  const getRecommendedKreatives = () => {
+    if (!state.userPreferences || state.userPreferences.length === 0) {
+      return [];
+    }
+
+    // Category mapping from customization IDs to kreatives.json categories
+    const categoryMapping = {
+      'digital-art': ['digital artist'],
+      'visual-art': ['fine artist'],
+      'music-sound': ['musician'],
+      'photography': ['photographer'],
+      'animation': ['animator'],
+      'graphic-design': ['designer'],
+      'crafts-textiles': ['fine artist'],
+      'sculpture': ['fine artist'],
+      'writing': ['writer'],
+      'performance': ['performer']
+    };
+
+    const preferredCategories = state.userPreferences.flatMap(pref => 
+      categoryMapping[pref] || []
+    );
+
+    return state.kreatives.filter(kreative => 
+      preferredCategories.includes(kreative.category.toLowerCase())
+    );
+  };
+
+  const recommendedKreatives = getRecommendedKreatives();
+
   const handleFavorite = (kreative) => {
     const isFavorited = state.favorites.some(fav => fav.id === kreative.id);
     if (isFavorited) {
@@ -50,16 +82,20 @@ const HomePage = ({ onNavigateToExplore, onArtistClick }) => {
 
   return (
     <div className="home-container">
+      <BackgroundAnimations intensity="light" theme="purple" />
       {/* Header */}
       <header className="home-header">
         <div className="header-content">
           <div className="logo-section">
             <img 
-              src="/images/logos-img/AfriKreateLogo.png" 
+              src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
               alt="AfriKreate Logo" 
               className="header-logo"
+              onError={(e) => {
+                console.log('Logo failed to load from:', e.target.src);
+                e.target.src = "/images/logos-img/AfriKreateLogo.png";
+              }}
             />
-            <h1 className="app-title">AfriKreate</h1>
           </div>
           
           <nav className="main-nav">
@@ -77,14 +113,17 @@ const HomePage = ({ onNavigateToExplore, onArtistClick }) => {
           <p className="hero-subtitle">Connect with artists, support creativity, and invest in the future of African art</p>
           
           <div className="featured-profiles">
-            <h3 className="section-title">Recommended For You</h3>
-            {state.kreatives.length > 0 ? (
+            <h3 className="section-title">
+              {recommendedKreatives.length > 0 ? 'Recommended For You' : 'Featured AfriKreatives'}
+            </h3>
+            {(recommendedKreatives.length > 0 ? recommendedKreatives : state.kreatives).length > 0 ? (
               <>
                 <div className="carousel-wrapper">
                   <div className="carousel-items">
                     {[-1, 0, 1].map((offset) => {
-                      const index = (currentCarouselIndex + offset + state.kreatives.length) % state.kreatives.length;
-                      const kreative = state.kreatives[index];
+                      const displayKreatives = recommendedKreatives.length > 0 ? recommendedKreatives : state.kreatives;
+                      const index = (currentCarouselIndex + offset + displayKreatives.length) % displayKreatives.length;
+                      const kreative = displayKreatives[index];
                       const isActive = offset === 0;
                       
                       return (
@@ -136,17 +175,19 @@ const HomePage = ({ onNavigateToExplore, onArtistClick }) => {
         </div>
       </section>
 
-      {/* Categories Section */}
+      {/* All AfriKreatives Section */}
       <section className="categories-section">
-        {categories.map(([categoryName, kreatives]) => (
-          <div key={categoryName} className="category-row">
-            <div className="category-header">
-              <h3 className="category-title">{categoryName}</h3>
-              <button className="view-all-btn">View All</button>
-            </div>
-            
-            <div className="kreatives-scroll">
-              {kreatives.map((kreative) => (
+        <div className="category-row">
+          <div className="category-header">
+            <h3 className="category-title">All AfriKreatives</h3>
+            <p className="category-description">
+              Browse through our diverse community of South African kreatives and connect with artists that inspire you.
+            </p>
+            <button className="view-all-btn" onClick={onNavigateToExplore}>Explore All</button>
+          </div>
+          
+          <div className="kreatives-scroll">
+            {state.kreatives.map((kreative) => (
                 <div key={kreative.id} className="kreative-card" onClick={() => onArtistClick(kreative)}>
                   <div className="kreative-image">
                     <img src={kreative.image} alt={kreative.name} />
@@ -165,7 +206,6 @@ const HomePage = ({ onNavigateToExplore, onArtistClick }) => {
               ))}
             </div>
           </div>
-        ))}
       </section>
 
       {/* Crypto Partners Section */}
@@ -249,9 +289,13 @@ const HomePage = ({ onNavigateToExplore, onArtistClick }) => {
         <div className="footer-content">
           <div className="footer-section">
             <img 
-              src="/images/logos-img/AfriKreateLogo.png" 
+              src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
               alt="AfriKreate Logo" 
               className="footer-logo"
+              onError={(e) => {
+                console.log('Logo failed to load from:', e.target.src);
+                e.target.src = "/images/logos-img/AfriKreateLogo.png";
+              }}
             />
             <p>Empowering South African creativity through blockchain technology</p>
           </div>

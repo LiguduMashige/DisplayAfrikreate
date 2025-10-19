@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
+import BackgroundAnimations from '../components/BackgroundAnimations';
 import './CustomizationPage.css';
 
 const CustomizationPage = ({ onComplete }) => {
@@ -77,29 +78,26 @@ const CustomizationPage = ({ onComplete }) => {
       } else if (prev.length < 7) {
         return [...prev, categoryId];
       }
-      return prev;
     });
   };
 
   const handleContinue = async () => {
-    if (selectedCategories.length === 0) {
-      return;
-    }
-
-    setIsLoading(true);
-    
     try {
-      // Simulate loading time
-      await new Promise(resolve => setTimeout(resolve, 8000));
+      setIsLoading(true);
       
+      // Save user preferences
       actions.setUserPreferences(selectedCategories);
       
-      if (onComplete) {
-        onComplete();
-      }
+      // Simulate loading time (3 seconds)
+      setTimeout(() => {
+        setIsLoading(false);
+        if (onComplete) {
+          onComplete();
+        }
+      }, 3000);
+      
     } catch (error) {
       console.error('Error saving preferences:', error);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -107,14 +105,19 @@ const CustomizationPage = ({ onComplete }) => {
   if (isLoading) {
     return (
       <div className="loading-container">
+        <BackgroundAnimations intensity="heavy" theme="purple" />
         <div className="loading-content">
           <img 
-            src="/images/logos-img/AfriKreateLogo.png" 
+            src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
             alt="AfriKreate Logo" 
             className="loading-logo"
+            onError={(e) => {
+              console.log('Logo failed to load from:', e.target.src);
+              e.target.src = "/images/logos-img/AfriKreateLogo.png";
+            }}
           />
           <div className="loading-spinner-large"></div>
-          <h2 className="loading-text">AfriKreate is kreating!</h2>
+          <h2 className="loading-text">AfriKreating...</h2>
           <p className="loading-subtitle">Setting up your personalized experience...</p>
         </div>
       </div>
@@ -123,12 +126,17 @@ const CustomizationPage = ({ onComplete }) => {
 
   return (
     <div className="customization-container">
+      <BackgroundAnimations intensity="medium" theme="purple" />
       <div className="customization-content">
         <div className="header-section">
           <img 
-            src="/images/logos-img/AfriKreateLogo.png" 
+            src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
             alt="AfriKreate Logo" 
             className="logo"
+            onError={(e) => {
+              console.log('Logo failed to load from:', e.target.src);
+              e.target.src = "/images/logos-img/AfriKreateLogo.png";
+            }}
           />
           <h1 className="main-title">What Creative Activities are you interested in?</h1>
           <p className="subtitle">

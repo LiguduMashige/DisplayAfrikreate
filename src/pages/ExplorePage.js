@@ -1,8 +1,40 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAppContext } from '../context/AppContext';
 import D3SouthAfricaMap from '../components/D3SouthAfricaMap';
-import { parseLocation, generatePricing, addLocationJitter, cityAliases } from '../utils/locationParser';
+import BackgroundAnimations from '../components/BackgroundAnimations';
+import { parseLocation } from '../utils/locationParser';
 import './ExplorePage.css';
+
+// Utility functions
+const addLocationJitter = (lat, lng) => {
+  const jitterAmount = 0.01; // Small amount to prevent exact overlaps
+  return {
+    lat: lat + (Math.random() - 0.5) * jitterAmount,
+    lng: lng + (Math.random() - 0.5) * jitterAmount
+  };
+};
+
+const generatePricing = () => {
+  const basePrice = Math.floor(Math.random() * 5000) + 1000; // R1000 - R6000
+  return {
+    hourly: basePrice,
+    daily: basePrice * 6,
+    project: basePrice * 20
+  };
+};
+
+// City aliases for search
+const cityAliases = {
+  'joburg': 'Johannesburg',
+  'jozi': 'Johannesburg',
+  'jhb': 'Johannesburg',
+  'cape town': 'Cape Town',
+  'cpt': 'Cape Town',
+  'durbs': 'Durban',
+  'dbn': 'Durban',
+  'pta': 'Pretoria',
+  'tshwane': 'Pretoria'
+};
 
 const ExplorePage = ({ onBack }) => {
   const { state } = useAppContext();
@@ -145,6 +177,7 @@ const ExplorePage = ({ onBack }) => {
 
   return (
     <div className="explore-container">
+      <BackgroundAnimations intensity="light" theme="purple" />
       {/* Header */}
       <header className="explore-header">
         <div className="header-content">
@@ -153,11 +186,14 @@ const ExplorePage = ({ onBack }) => {
           </button>
           <div className="logo-section">
             <img 
-              src="/images/logos-img/AfriKreateLogo.png" 
+              src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
               alt="AfriKreate Logo" 
               className="header-logo"
+              onError={(e) => {
+                console.log('Logo failed to load from:', e.target.src);
+                e.target.src = "/images/logos-img/AfriKreateLogo.png";
+              }}
             />
-            <h1 className="app-title">AfriKreate</h1>
           </div>
         </div>
       </header>

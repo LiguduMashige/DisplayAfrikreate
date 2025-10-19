@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
+import BackgroundAnimations from '../components/BackgroundAnimations';
 import './LoginPage.css';
 
 const LoginPage = ({ onLogin }) => {
@@ -93,14 +94,18 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div className="login-container">
+      <BackgroundAnimations intensity="medium" theme="purple" />
       <div className="login-card">
         <div className="logo-section">
           <img 
-            src="/images/logos-img/AfriKreateLogo.png" 
+            src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
             alt="AfriKreate Logo" 
             className="logo"
+            onError={(e) => {
+              console.log('Logo failed to load from:', e.target.src);
+              e.target.src = "/images/logos-img/AfriKreateLogo.png";
+            }}
           />
-          <h1 className="app-title">AfriKreate</h1>
         </div>
 
         <div className="form-section">

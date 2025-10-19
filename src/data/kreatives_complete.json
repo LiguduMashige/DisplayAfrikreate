@@ -1,0 +1,45 @@
+[
+    {
+        "id": 1,
+        "category": "digital art",
+        "name": "Thabo Mthembu",
+        "description": "Thabo Mthembu is a pioneering digital artist from Johannesburg who creates immersive virtual reality experiences that blend traditional Zulu storytelling with cutting-edge technology.",
+        "image": "/images/profile-img/Thabo_Mthembu.jpg",
+        "followers": "24.3k",
+        "location": "45 Pritchard Street, Johannesburg CBD, Johannesburg, 2001, South Africa",
+        "artworks": [
+            {"artwork_id": 101, "title": "Digital Sangoma", "size": "Digital Installation", "medium": "VR Experience", "description": "An immersive virtual reality experience that allows users to interact with digital representations of traditional healers", "image": "/images/thabo-mthembu-artworks/Digital_Sangoma.jpg"},
+            {"artwork_id": 102, "title": "Ubuntu Code", "size": "4K Digital", "medium": "Digital Animation", "description": "A mesmerizing digital animation exploring the philosophy of Ubuntu through algorithmic patterns", "image": "/images/thabo-mthembu-artworks/Ubuntu_Code.jpg"},
+            {"artwork_id": 103, "title": "Cyber Ancestors", "size": "Digital NFT", "medium": "Blockchain Art", "description": "A collection of digital portraits honoring African ancestors in cyberpunk aesthetics", "image": "/images/thabo-mthembu-artworks/Cyber_Ancestors.jpg"},
+            {"artwork_id": 104, "title": "Virtual Veld", "size": "360° Digital", "medium": "Interactive Media", "description": "An interactive digital landscape recreating the South African veld with augmented reality elements", "image": "/images/thabo-mthembu-artworks/Virtual_Veld.jpg"},
+            {"artwork_id": 105, "title": "Digital Drums", "size": "Audio-Visual", "medium": "Generative Art", "description": "A generative art piece that creates visual patterns based on traditional African drum rhythms", "image": "/images/thabo-mthembu-artworks/Digital_Drums.jpg"},
+            {"artwork_id": 106, "title": "Pixel Praise", "size": "HD Digital", "medium": "Digital Collage", "description": "A digital collage celebrating South African gospel music through pixelated imagery", "image": "/images/thabo-mthembu-artworks/Pixel_Praise.jpg"},
+            {"artwork_id": 107, "title": "AI Ubuntu", "size": "Machine Learning", "medium": "AI Generated Art", "description": "An AI-generated artwork exploring what artificial intelligence understands about Ubuntu philosophy", "image": "/images/thabo-mthembu-artworks/AI_Ubuntu.jpg"},
+            {"artwork_id": 108, "title": "Digital Diaspora", "size": "Web Installation", "medium": "Interactive Website", "description": "An interactive web experience mapping the global South African diaspora through digital storytelling", "image": "/images/thabo-mthembu-artworks/Digital_Diaspora.jpg"},
+            {"artwork_id": 109, "title": "Quantum Qoma", "size": "Holographic", "medium": "Hologram Art", "description": "A holographic installation featuring traditional Xhosa dance movements in quantum space", "image": "/images/thabo-mthembu-artworks/Quantum_Qoma.jpg"},
+            {"artwork_id": 110, "title": "Metaverse Mandela", "size": "Virtual World", "medium": "3D Environment", "description": "A virtual world dedicated to Nelson Mandela's legacy, built for metaverse exploration", "image": "/images/thabo-mthembu-artworks/Metaverse_Mandela.jpg"}
+        ]
+    },
+    {
+        "id": 2,
+        "category": "digital art",
+        "name": "Aisha Patel",
+        "description": "Aisha Patel is a digital artist from Durban who specializes in creating stunning digital paintings that merge Indian and African cultural elements.",
+        "image": "/images/profile-img/Aisha_Patel.jpg",
+        "followers": "18.7k",
+        "location": "123 Chatsworth Road, Chatsworth, Durban, 4092, South Africa",
+        "artworks": [
+            {"artwork_id": 201, "title": "Bollywood Braai", "size": "Digital Print 100x70cm", "medium": "Digital Painting", "description": "A vibrant digital painting depicting the fusion of Indian and South African cultures", "image": "/images/aisha-patel-artworks/Bollywood_Braai.jpg"},
+            {"artwork_id": 202, "title": "Spice Route Stories", "size": "Digital Series", "medium": "Digital Illustration", "description": "A series of digital illustrations telling the story of Indian migration to South Africa", "image": "/images/aisha-patel-artworks/Spice_Route_Stories.jpg"},
+            {"artwork_id": 203, "title": "Digital Diwali", "size": "4K Animation", "medium": "Motion Graphics", "description": "An animated celebration of Diwali in contemporary South African settings", "image": "/images/aisha-patel-artworks/Digital_Diwali.jpg"},
+            {"artwork_id": 204, "title": "Curry & Code", "size": "Interactive App", "medium": "Mobile Art App", "description": "An interactive mobile app that teaches users about Indian spices through digital art", "image": "/images/aisha-patel-artworks/Curry_Code.jpg"},
+            {"artwork_id": 205, "title": "Sari Pixels", "size": "Digital Fashion", "medium": "3D Modeling", "description": "3D digital fashion designs reimagining traditional saris for virtual environments", "image": "/images/aisha-patel-artworks/Sari_Pixels.jpg"},
+            {"artwork_id": 206, "title": "Temple Tech", "size": "AR Experience", "medium": "Augmented Reality", "description": "An AR experience that brings Hindu temple architecture to life through digital overlays", "image": "/images/aisha-patel-artworks/Temple_Tech.jpg"},
+            {"artwork_id": 207, "title": "Rangoli Remix", "size": "Digital Pattern", "medium": "Generative Design", "description": "Generative digital rangoli patterns that evolve based on user interaction", "image": "/images/aisha-patel-artworks/Rangoli_Remix.jpg"},
+            {"artwork_id": 208, "title": "Bollywood Bytes", "size": "Video Art", "medium": "Digital Video", "description": "A digital video artwork exploring Bollywood's influence on South African Indian culture", "image": "/images/aisha-patel-artworks/Bollywood_Bytes.jpg"},
+            {"artwork_id": 209, "title": "Masala Matrix", "size": "Data Visualization", "medium": "Information Design", "description": "A data visualization artwork mapping the complexity of Indian spice combinations", "image": "/images/aisha-patel-artworks/Masala_Matrix.jpg"},
+            {"artwork_id": 210, "title": "Digital Durga", "size": "VR Sculpture", "medium": "Virtual Reality", "description": "A virtual reality sculpture of Goddess Durga created for immersive worship experiences", "image": "/images/aisha-patel-artworks/Digital_Durga.jpg"},
+            {"artwork_id": 211, "title": "Cyber Samosa", "size": "3D Animation", "medium": "Character Animation", "description": "A playful 3D animated character based on the beloved samosa, exploring food culture", "image": "/images/aisha-patel-artworks/Cyber_Samosa.jpg"}
+        ]
+    }
+]
