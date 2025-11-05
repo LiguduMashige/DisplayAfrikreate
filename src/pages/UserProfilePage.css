@@ -5,6 +5,32 @@
   color: white;
 }
 
+.profile-header {
+  margin-bottom: 2rem;
+}
+
+.profile-header .header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.profile-header .logo-section {
+  display: flex;
+  align-items: center;
+}
+
+.profile-header .header-logo {
+  width: 80px;
+  height: auto;
+  max-height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.5));
+  display: block;
+}
+
 .profile-back-btn {
   background: rgba(139, 92, 246, 0.2);
   border: 2px solid rgba(139, 92, 246, 0.3);
@@ -13,7 +39,6 @@
   border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
-  margin-bottom: 2rem;
   transition: all 0.3s ease;
 }
 

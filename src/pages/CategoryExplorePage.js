@@ -37,9 +37,13 @@ const CategoryExplorePage = ({ onBack, onArtistClick }) => {
         </button>
         <div className="logo-section">
           <img 
-            src="/images/logos-img/AfriKreateLogo.png" 
+            src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
             alt="AfriKreate Logo" 
             className="header-logo"
+            onError={(e) => {
+              console.log('Logo failed to load from:', e.target.src);
+              e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
+            }}
           />
           <h1 className="app-title">AfriKreate</h1>
         </div>

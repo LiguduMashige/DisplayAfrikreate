@@ -108,12 +108,12 @@ const CustomizationPage = ({ onComplete }) => {
         <BackgroundAnimations intensity="heavy" theme="purple" />
         <div className="loading-content">
           <img 
-            src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
+            src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
             alt="AfriKreate Logo" 
             className="loading-logo"
             onError={(e) => {
               console.log('Logo failed to load from:', e.target.src);
-              e.target.src = "/images/logos-img/AfriKreateLogo.png";
+              e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
             }}
           />
           <div className="loading-spinner-large"></div>
@@ -130,12 +130,12 @@ const CustomizationPage = ({ onComplete }) => {
       <div className="customization-content">
         <div className="header-section">
           <img 
-            src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
+            src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
             alt="AfriKreate Logo" 
             className="logo"
             onError={(e) => {
               console.log('Logo failed to load from:', e.target.src);
-              e.target.src = "/images/logos-img/AfriKreateLogo.png";
+              e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
             }}
           />
           <h1 className="main-title">What Creative Activities are you interested in?</h1>

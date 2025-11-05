@@ -65,7 +65,22 @@ const UserProfilePage = ({ onBack }) => {
 
   return (
     <div className="user-profile-container">
-      <button className="profile-back-btn" onClick={onBack}>← Back</button>
+      <header className="profile-header">
+        <div className="header-content">
+          <div className="logo-section">
+            <img
+              src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
+              alt="AfriKreate Logo"
+              className="header-logo"
+              onError={(e) => {
+                console.log('Logo failed to load from:', e.target.src);
+                e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
+              }}
+            />
+          </div>
+          <button className="profile-back-btn" onClick={onBack}>← Back</button>
+        </div>
+      </header>
 
       <div className="profile-hero">
         <div className="profile-avatar">

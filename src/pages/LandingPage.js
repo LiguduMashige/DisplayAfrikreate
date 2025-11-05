@@ -33,13 +33,13 @@ const LandingPage = ({ onGetStarted }) => {
           <div className="title-section">
             <div className="logo-wrapper">
               <img 
-                src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
+                src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
                 alt="AfriKreate Logo" 
                 className="landing-logo"
                 onError={(e) => {
                   console.log('Logo failed to load from:', e.target.src);
                   // Try alternative path
-                  e.target.src = "/images/logos-img/AfriKreateLogo.png";
+                  e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
                 }}
                 onLoad={() => console.log('Logo loaded successfully')}
               />

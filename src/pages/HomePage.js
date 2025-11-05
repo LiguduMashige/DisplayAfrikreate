@@ -88,21 +88,29 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
         <div className="header-content">
           <div className="logo-section">
             <img 
-              src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
+              src={process.env.PUBLIC_URL + "/images/logo-new/Afrikreate Logo Transparant.png"}
               alt="AfriKreate Logo" 
               className="header-logo"
+              onLoad={() => console.log('✅ Logo loaded successfully from:', process.env.PUBLIC_URL + "/images/logo-new/Afrikreate Logo Transparant.png")}
               onError={(e) => {
-                console.log('Logo failed to load from:', e.target.src);
-                e.target.src = "/images/logos-img/AfriKreateLogo.png";
+                console.error('❌ Logo failed to load from:', e.target.src);
               }}
             />
           </div>
           
           <nav className="main-nav">
-            <button className="nav-btn" onClick={onNavigateToExplore}>Explore</button>
-            <button className="nav-btn" onClick={onNavigateToEvents}>Events</button>
-            <button className="nav-btn" onClick={() => alert('Favourites feature coming soon!')}>Favourites</button>
-            <button className="nav-btn" onClick={onNavigateToUserProfile}>Profile</button>
+            <button className="nav-btn icon-btn" onClick={onNavigateToExplore} title="Explore">
+              🔍
+            </button>
+            <button className="nav-btn icon-btn" onClick={onNavigateToEvents} title="Events">
+              📅
+            </button>
+            <button className="nav-btn icon-btn" onClick={() => alert('Favourites feature coming soon!')} title="Favourites">
+              ❤️
+            </button>
+            <button className="nav-btn icon-btn" onClick={onNavigateToUserProfile} title="Profile">
+              👤
+            </button>
           </nav>
         </div>
       </header>
@@ -290,12 +298,12 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
         <div className="footer-content">
           <div className="footer-section">
             <img 
-              src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
+              src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
               alt="AfriKreate Logo" 
               className="footer-logo"
               onError={(e) => {
                 console.log('Logo failed to load from:', e.target.src);
-                e.target.src = "/images/logos-img/AfriKreateLogo.png";
+                e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
               }}
             />
             <p>Empowering South African creativity through blockchain technology</p>

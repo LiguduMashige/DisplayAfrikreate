@@ -1,11 +1,27 @@
 .login-container {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #4a1a4a 0%, #2d1b69 50%, #1a1a2e 100%);
   padding: 20px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.logo-section-outside {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-outside {
+  width: 180px;
+  height: auto;
+  max-height: 180px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
 }
 
 .login-card {

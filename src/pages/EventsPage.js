@@ -58,9 +58,21 @@ END:VCALENDAR`;
 
   return (
     <div className="events-container">
-      <button className="back-button" onClick={onBack}>← Back</button>
-      
       <header className="events-header">
+        <div className="header-content">
+          <div className="logo-section">
+            <img
+              src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
+              alt="AfriKreate Logo"
+              className="header-logo"
+              onError={(e) => {
+                console.log('Logo failed to load from:', e.target.src);
+                e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
+              }}
+            />
+          </div>
+          <button className="back-button" onClick={onBack}>← Back</button>
+        </div>
         <h1>Creative Events in South Africa</h1>
         <p>Discover and attend amazing artistic events near you</p>
       </header>

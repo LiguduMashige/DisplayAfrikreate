@@ -95,19 +95,18 @@ const LoginPage = ({ onLogin }) => {
   return (
     <div className="login-container">
       <BackgroundAnimations intensity="medium" theme="purple" />
+      <div className="logo-section-outside">
+        <img 
+          src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
+          alt="AfriKreate Logo" 
+          className="logo-outside"
+          onError={(e) => {
+            console.log('Logo failed to load from:', e.target.src);
+            e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
+          }}
+        />
+      </div>
       <div className="login-card">
-        <div className="logo-section">
-          <img 
-            src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
-            alt="AfriKreate Logo" 
-            className="logo"
-            onError={(e) => {
-              console.log('Logo failed to load from:', e.target.src);
-              e.target.src = "/images/logos-img/AfriKreateLogo.png";
-            }}
-          />
-        </div>
-
         <div className="form-section">
           <h2 className="form-title">
             {isLogin ? 'Welcome Back' : 'Create New Account'}

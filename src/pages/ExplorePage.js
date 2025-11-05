@@ -181,20 +181,20 @@ const ExplorePage = ({ onBack }) => {
       {/* Header */}
       <header className="explore-header">
         <div className="header-content">
-          <button className="back-btn" onClick={onBack}>
-            ← Back
-          </button>
           <div className="logo-section">
             <img
-              src={`${process.env.PUBLIC_URL}/images/logos-img/AfriKreateLogo.png`}
+              src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
               alt="AfriKreate Logo"
               className="header-logo"
               onError={(e) => {
                 console.log('Logo failed to load from:', e.target.src);
-                e.target.src = "/images/logos-img/AfriKreateLogo.png";
+                e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
               }}
             />
           </div>
+          <button className="back-btn" onClick={onBack}>
+            ← Back
+          </button>
         </div>
       </header>
 
