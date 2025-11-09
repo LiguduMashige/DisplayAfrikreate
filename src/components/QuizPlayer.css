@@ -1,0 +1,362 @@
+.quiz-player {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 3rem;
+  max-width: 1100px;
+  width: 95%;
+  max-height: 92vh;
+  overflow-y: auto;
+  margin: 0 auto;
+  box-shadow: 0 25px 70px rgba(139, 92, 246, 0.4), 0 0 0 1px rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.quiz-header {
+  margin-bottom: 32px;
+}
+
+.quiz-header h2 {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.quiz-progress {
+  margin-top: 16px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #ec4899);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.progress-text {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.quiz-content {
+  margin: 32px 0;
+}
+
+.question h3 {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(247, 147, 30, 0.3);
+}
+
+.option.selected {
+  background: rgba(247, 147, 30, 0.15);
+  border-color: #F7931E;
+}
+
+.option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.option-text {
+  color: var(--text-primary);
+  font-size: 16px;
+  flex: 1;
+  padding-left: 12px;
+}
+
+.checkmark {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.option.selected .checkmark {
+  border-color: #F7931E;
+  background: #F7931E;
+}
+
+.option.selected .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.quiz-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  gap: 16px;
+}
+
+.nav-center {
+  flex: 1;
+  text-align: center;
+}
+
+.auto-save-indicator {
+  color: #4CAF50;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.btn-nav {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-previous, .btn-next {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.btn-previous:hover:not(:disabled),
+.btn-next:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(247, 147, 30, 0.3);
+}
+
+.btn-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.warning-message {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(255, 152, 0, 0.1);
+  border-left: 4px solid #FF9800;
+  border-radius: 4px;
+  color: #FFB74D;
+  font-size: 14px;
+}
+
+/* Quiz Results */
+.quiz-results {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 48px 32px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.results-header {
+  margin-bottom: 32px;
+}
+
+.success-icon,
+.info-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.results-header h2 {
+  color: white;
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.results-header p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+}
+
+.results-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  color: white;
+  font-size: 14px;
+}
+
+.certificate-notice {
+  background: rgba(76, 175, 80, 0.1);
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 24px 0;
+}
+
+.certificate-notice p {
+  color: #81C784;
+  font-size: 16px;
+  margin: 0;
+}
+
+.results-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.btn-retry,
+.btn-close {
+  padding: 12px 32px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-retry {
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  color: white;
+}
+
+.btn-retry:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(247, 147, 30, 0.3);
+}
+
+.btn-close {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+  .quiz-player,
+  .quiz-results {
+    padding: 2rem 1.5rem;
+    width: 98%;
+  }
+
+  .results-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-navigation {
+    flex-direction: column;
+  }
+
+  .btn-nav {
+    width: 100%;
+  }
+
+  .nav-center {
+    order: -1;
+    margin-bottom: 16px;
+  }
+
+  .quiz-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .question-text {
+    font-size: 1.1rem;
+  }
+
+  .option-text {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quiz-player,
+  .quiz-results {
+    padding: 1.5rem 1rem;
+  }
+
+  .quiz-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .question-text {
+    font-size: 1rem;
+  }
+
+  .option-text {
+    font-size: 0.9rem;
+  }
+
+  .btn-nav, .btn-retry, .btn-close {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+  }
+}

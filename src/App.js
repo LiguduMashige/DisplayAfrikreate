@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider } from './context/AppContext';
 import PageTransition from './components/PageTransition';
 import LandingPage from './pages/LandingPage';
@@ -6,17 +6,43 @@ import LoginPage from './pages/LoginPage';
 import CustomizationPage from './pages/CustomizationPage';
 import HomePage from './pages/HomePage';
 import ExplorePage from './pages/ExplorePage';
-import CategoryExplorePage from './pages/CategoryExplorePage';
 import ProfilePage from './pages/ProfilePage';
-import BlogPost from './pages/BlogPost';
 import EventsPage from './pages/EventsPage';
-import UserProfilePage from './pages/UserProfilePage';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import UserProfilePage from './pages/UserProfilePage.jsx';
+import FeedPage from './pages/FeedPage';
 import './App.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('landing');
-  const [selectedArtist, setSelectedArtist] = useState(null);
+  const [currentPage, setCurrentPage] = useState(() => {
+    // Check if user is authenticated first
+    const isAuthenticated = localStorage.getItem('afrikreateIsAuthenticated') === 'true';
+    
+    if (!isAuthenticated) {
+      // Not authenticated - always start at landing page
+      return 'landing';
+    }
+    
+    // Authenticated - load saved page or default to home
+    return localStorage.getItem('afrikreateCurrentPage') || 'home';
+  });
+  const [selectedArtist, setSelectedArtist] = useState(() => {
+    const saved = localStorage.getItem('afrikreateSelectedArtist');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  // Save current page to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('afrikreateCurrentPage', currentPage);
+  }, [currentPage]);
+
+  // Save selected artist to localStorage whenever it changes
+  useEffect(() => {
+    if (selectedArtist) {
+      localStorage.setItem('afrikreateSelectedArtist', JSON.stringify(selectedArtist));
+    } else {
+      localStorage.removeItem('afrikreateSelectedArtist');
+    }
+  }, [selectedArtist]);
 
   const handleGetStarted = () => {
     setCurrentPage('login');
@@ -34,6 +60,9 @@ function App() {
     setCurrentPage('explore');
   };
 
+  const handleNavigateToFeed = () => {
+    setCurrentPage('feed');
+  };
 
   const handleArtistClick = (artist) => {
     setSelectedArtist(artist);
@@ -45,10 +74,6 @@ function App() {
     setSelectedArtist(null);
   };
 
-  const handleBackToCategoryExplore = () => {
-    setCurrentPage('categoryExplore');
-    setSelectedArtist(null);
-  };
 
   const handleNavigateToEvents = () => {
     setCurrentPage('events');
@@ -64,6 +89,18 @@ function App() {
 
   const handleBackFromUserProfile = () => {
     setCurrentPage('home');
+  };
+
+  const handleBackFromFeed = () => {
+    setCurrentPage('home');
+  };
+
+  const handleLogout = () => {
+    // Clear all localStorage
+    localStorage.clear();
+    // Reset to landing page
+    setCurrentPage('landing');
+    setSelectedArtist(null);
   };
 
   const renderCurrentPage = () => {
@@ -90,25 +127,28 @@ function App() {
         return (
           <PageTransition isActive={true} transitionKey="home">
             <HomePage 
+              onNavigateToHome={handleBackToHome}
               onNavigateToExplore={handleNavigateToExplore} 
               onArtistClick={handleArtistClick}
               onNavigateToEvents={handleNavigateToEvents}
               onNavigateToUserProfile={handleNavigateToUserProfile}
+              onNavigateToFeed={handleNavigateToFeed}
+              onLogout={handleLogout}
             />
           </PageTransition>
         );
       case 'explore':
         return (
           <PageTransition isActive={true} transitionKey="explore">
-            <ExplorePage onBack={handleBackToHome} />
-          </PageTransition>
-        );
-      case 'categoryExplore':
-        return (
-          <PageTransition isActive={true} transitionKey="categoryExplore">
-            <CategoryExplorePage 
+            <ExplorePage 
               onBack={handleBackToHome}
+              onNavigateToHome={handleBackToHome}
+              onNavigateToExplore={handleNavigateToExplore}
+              onNavigateToEvents={handleNavigateToEvents}
+              onNavigateToFeed={handleNavigateToFeed}
+              onNavigateToUserProfile={handleNavigateToUserProfile}
               onArtistClick={handleArtistClick}
+              onLogout={handleLogout}
             />
           </PageTransition>
         );
@@ -117,7 +157,13 @@ function App() {
           <PageTransition isActive={true} transitionKey="profile">
             <ProfilePage 
               kreative={selectedArtist}
-              onBack={handleBackToCategoryExplore}
+              onBack={handleBackToHome}
+              onNavigateToHome={handleBackToHome}
+              onNavigateToExplore={handleNavigateToExplore}
+              onNavigateToEvents={handleNavigateToEvents}
+              onNavigateToFeed={handleNavigateToFeed}
+              onNavigateToUserProfile={handleNavigateToUserProfile}
+              onLogout={handleLogout}
             />
           </PageTransition>
         );
@@ -126,6 +172,12 @@ function App() {
           <PageTransition isActive={true} transitionKey="events">
             <EventsPage 
               onBack={handleBackFromEvents}
+              onNavigateToHome={handleBackToHome}
+              onNavigateToExplore={handleNavigateToExplore}
+              onNavigateToEvents={handleNavigateToEvents}
+              onNavigateToFeed={handleNavigateToFeed}
+              onNavigateToUserProfile={handleNavigateToUserProfile}
+              onLogout={handleLogout}
             />
           </PageTransition>
         );
@@ -134,6 +186,26 @@ function App() {
           <PageTransition isActive={true} transitionKey="userProfile">
             <UserProfilePage 
               onBack={handleBackFromUserProfile}
+              onNavigateToHome={handleBackToHome}
+              onNavigateToExplore={handleNavigateToExplore}
+              onNavigateToEvents={handleNavigateToEvents}
+              onNavigateToFeed={handleNavigateToFeed}
+              onNavigateToUserProfile={handleNavigateToUserProfile}
+              onLogout={handleLogout}
+            />
+          </PageTransition>
+        );
+      case 'feed':
+        return (
+          <PageTransition isActive={true} transitionKey="feed">
+            <FeedPage 
+              onBack={handleBackFromFeed}
+              onNavigateToHome={handleBackToHome}
+              onNavigateToExplore={handleNavigateToExplore}
+              onNavigateToEvents={handleNavigateToEvents}
+              onNavigateToFeed={handleNavigateToFeed}
+              onNavigateToUserProfile={handleNavigateToUserProfile}
+              onLogout={handleLogout}
             />
           </PageTransition>
         );

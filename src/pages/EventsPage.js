@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
 import { eventsData } from '../data/eventsData';
 import { useAppContext } from '../context/AppContext';
+import Navbar from '../components/Navbar';
 import './EventsPage.css';
 
-const EventsPage = ({ onBack }) => {
+// Lazy load FullCalendar to avoid blocking
+let FullCalendar, dayGridPlugin, interactionPlugin;
+try {
+  FullCalendar = require('@fullcalendar/react').default;
+  dayGridPlugin = require('@fullcalendar/daygrid').default;
+  interactionPlugin = require('@fullcalendar/interaction').default;
+} catch (err) {
+  console.warn('FullCalendar not available yet:', err);
+}
+
+const EventsPage = ({ onBack, onNavigateToHome, onNavigateToExplore, onNavigateToEvents, onNavigateToFeed, onNavigateToUserProfile, onLogout }) => {
   const { actions } = useAppContext();
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmedEvent, setConfirmedEvent] = useState(null);
+  const [showRSVPConfirm, setShowRSVPConfirm] = useState(false);
+  const [pendingEvent, setPendingEvent] = useState(null);
 
   const filteredEvents = eventsData.filter(event => {
     const matchesFilter = filter === 'all' || event.category === filter;
@@ -19,14 +32,21 @@ const EventsPage = ({ onBack }) => {
 
   const categories = ['all', ...new Set(eventsData.map(e => e.category))];
 
-  const handleRSVP = (event) => {
-    actions.addRSVP(event);
+  const handleRSVPClick = (event) => {
+    setPendingEvent(event);
+    setShowRSVPConfirm(true);
+  };
+
+  const confirmRSVP = () => {
+    if (!pendingEvent) return;
+
+    actions.addRSVP(pendingEvent);
     
-    const eventDate = new Date(event.date + ' ' + event.time);
+    const eventDate = new Date(pendingEvent.date + ' ' + pendingEvent.time);
     const eventDetails = {
-      title: event.title,
-      description: event.description,
-      location: event.location + ', ' + event.city,
+      title: pendingEvent.title,
+      description: pendingEvent.description,
+      location: pendingEvent.location + ', ' + pendingEvent.city,
       startDate: eventDate,
       endDate: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000)
     };
@@ -46,33 +66,49 @@ END:VCALENDAR`;
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${event.title.replace(/\s+/g, '_')}.ics`;
+    link.download = `${pendingEvent.title.replace(/\s+/g, '_')}.ics`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    setConfirmedEvent(event);
+    setShowRSVPConfirm(false);
+    setConfirmedEvent(pendingEvent);
     setShowConfirmation(true);
+    setPendingEvent(null);
   };
+
+  const cancelRSVP = () => {
+    setShowRSVPConfirm(false);
+    setPendingEvent(null);
+  };
+
+  // Helper function for event colors
+  const getCategoryColor = (category) => {
+    const colors = {
+      'Music': '#ef4444',
+      'Art Exhibition': '#8b5cf6',
+      'Workshop': '#10b981',
+      'Networking': '#f59e0b',
+      'Tech': '#3b82f6',
+      'Other': '#6b7280'
+    };
+    return colors[category] || colors['Other'];
+  };
+
 
   return (
     <div className="events-container">
+      <Navbar 
+        onNavigateToHome={onNavigateToHome}
+        onNavigateToExplore={onNavigateToExplore}
+        onNavigateToEvents={onNavigateToEvents}
+        onNavigateToFeed={onNavigateToFeed}
+        onNavigateToUserProfile={onNavigateToUserProfile}
+        onLogout={onLogout}
+      />
+      
       <header className="events-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <img
-              src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
-              alt="AfriKreate Logo"
-              className="header-logo"
-              onError={(e) => {
-                console.log('Logo failed to load from:', e.target.src);
-                e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
-              }}
-            />
-          </div>
-          <button className="back-button" onClick={onBack}>← Back</button>
-        </div>
         <h1>Creative Events in South Africa</h1>
         <p>Discover and attend amazing artistic events near you</p>
       </header>
@@ -97,8 +133,10 @@ END:VCALENDAR`;
             </button>
           ))}
         </div>
+
       </div>
 
+      {/* Events List */}
       <div className="events-grid">
         {filteredEvents.map(event => (
           <div key={event.id} className="event-card">
@@ -132,7 +170,7 @@ END:VCALENDAR`;
               
               <button 
                 className="rsvp-button"
-                onClick={() => handleRSVP(event)}
+                onClick={() => handleRSVPClick(event)}
               >
                 RSVP & Add to Calendar
               </button>
@@ -141,11 +179,43 @@ END:VCALENDAR`;
         ))}
       </div>
 
+
+      {/* RSVP Confirmation Dialog */}
+      {showRSVPConfirm && pendingEvent && (
+        <div className="confirmation-modal" onClick={cancelRSVP}>
+          <div className="confirmation-content rsvp-confirm" onClick={(e) => e.stopPropagation()}>
+            <div className="confirmation-header">
+              <span className="confirmation-icon question">?</span>
+              <h2>Confirm RSVP</h2>
+            </div>
+            <div className="confirmation-body">
+              <p className="confirmation-question">
+                Are you sure you want to RSVP for this event?
+              </p>
+              <h3>{pendingEvent.title}</h3>
+              <p className="confirmation-detail">📅 {new Date(pendingEvent.date).toLocaleDateString()}</p>
+              <p className="confirmation-detail">🕐 {pendingEvent.time}</p>
+              <p className="confirmation-detail">📍 {pendingEvent.location}, {pendingEvent.city}</p>
+              <p className="confirmation-detail">💰 {pendingEvent.price}</p>
+            </div>
+            <div className="confirmation-actions">
+              <button className="confirmation-cancel" onClick={cancelRSVP}>
+                Cancel
+              </button>
+              <button className="confirmation-confirm" onClick={confirmRSVP}>
+                Confirm RSVP
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Confirmation */}
       {showConfirmation && confirmedEvent && (
         <div className="confirmation-modal" onClick={() => setShowConfirmation(false)}>
           <div className="confirmation-content" onClick={(e) => e.stopPropagation()}>
             <div className="confirmation-header">
-              <span className="confirmation-icon">✓</span>
+              <span className="confirmation-icon success">✓</span>
               <h2>Booking Confirmed!</h2>
             </div>
             <div className="confirmation-body">

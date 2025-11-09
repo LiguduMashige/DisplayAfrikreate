@@ -2,7 +2,7 @@ export const eventsData = [
   {
     id: 1,
     title: "Cape Town Art Fair 2025",
-    date: "2025-02-14",
+    date: "2025-12-14",
     time: "10:00 AM",
     location: "Cape Town International Convention Centre",
     city: "Cape Town",
@@ -15,7 +15,7 @@ export const eventsData = [
   {
     id: 2,
     title: "Johannesburg Photography Workshop",
-    date: "2025-02-20",
+    date: "2025-12-20",
     time: "2:00 PM",
     location: "Market Photo Workshop",
     city: "Johannesburg",
@@ -28,7 +28,7 @@ export const eventsData = [
   {
     id: 3,
     title: "Durban Music & Arts Festival",
-    date: "2025-03-05",
+    date: "2026-01-15",
     time: "6:00 PM",
     location: "Moses Mabhida Stadium",
     city: "Durban",
@@ -41,7 +41,7 @@ export const eventsData = [
   {
     id: 4,
     title: "Design Indaba Conference",
-    date: "2025-03-15",
+    date: "2026-02-05",
     time: "9:00 AM",
     location: "Artscape Theatre Centre",
     city: "Cape Town",
@@ -54,7 +54,7 @@ export const eventsData = [
   {
     id: 5,
     title: "Pretoria Craft Market",
-    date: "2025-02-28",
+    date: "2026-01-25",
     time: "8:00 AM",
     location: "Hazel Food Market",
     city: "Pretoria",
@@ -67,7 +67,7 @@ export const eventsData = [
   {
     id: 6,
     title: "African Film Festival",
-    date: "2025-04-10",
+    date: "2026-03-10",
     time: "7:00 PM",
     location: "The Bioscope Independent Cinema",
     city: "Johannesburg",

@@ -1,0 +1,149 @@
+/* Navigation Bar */
+.navbar {
+  position: sticky;
+  top: 0;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+  z-index: 100;
+  padding: 12px 0;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
+}
+
+.navbar-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.nav-icon-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+
+.nav-icon-btn:hover {
+  background: rgba(139, 92, 246, 0.2);
+  transform: translateY(-2px);
+}
+
+.nav-icon-btn svg {
+  stroke: #ffffff;
+  transition: stroke 0.3s ease;
+}
+
+.nav-icon-btn:hover svg {
+  stroke: #a78bfa;
+}
+
+/* Logout Button Specific Styling */
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.logout-btn:hover svg {
+  stroke: #ef4444;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    padding: 8px 0;
+  }
+
+  .navbar-container {
+    padding: 0 20px;
+  }
+
+  .logo-img {
+    height: 32px;
+  }
+
+  .navbar-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(26, 26, 46, 0.98);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(139, 92, 246, 0.2);
+    padding: 8px 16px 12px;
+    display: flex;
+    justify-content: space-around;
+    gap: 0;
+    z-index: 1000;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-icon-btn {
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 12px;
+    width: auto;
+    height: auto;
+    font-size: 0.7rem;
+  }
+
+  .nav-icon-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-img {
+    height: 28px;
+  }
+
+  .navbar-buttons {
+    padding: 6px 8px 10px;
+  }
+
+  .nav-icon-btn {
+    padding: 6px 8px;
+  }
+
+  .nav-icon-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+}

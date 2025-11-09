@@ -14,29 +14,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl
 });
 
-// Optional: slightly different icons per category (simple color dots)
-// You can keep default icons if you prefer.
-const makeIcon = (color = "#2E7D32") =>
+// Bright red pin icon for all markers
+const makeRedIcon = () =>
   L.divIcon({
     className: "custom-pin",
     html: `<span style="
-      display:inline-block;width:12px;height:12px;border-radius:50%;
-      background:${color};border:2px solid white;box-shadow:0 0 2px rgba(0,0,0,.6);
+      display:inline-block;width:16px;height:16px;border-radius:50%;
+      background:#ef4444;border:3px solid white;box-shadow:0 0 8px rgba(239,68,68,0.8);
     "></span>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
   });
-
-const categoryColor = (cat = "") => {
-  const c = cat.toLowerCase();
-  if (c.includes("photographer")) return "#1565C0";
-  if (c.includes("digital")) return "#6A1B9A";
-  if (c.includes("animator")) return "#EF6C00";
-  if (c.includes("designer")) return "#00897B";
-  if (c.includes("musician")) return "#C62828";
-  if (c.includes("fine")) return "#2E7D32";
-  return "#455A64";
-};
 
 // Auto-fit map to markers
 function FitToMarkers({ points }) {
@@ -76,8 +64,7 @@ export default function LeafletArtistsMap({
         <Marker
           key={artist.id}
           position={[artist.lat, artist.lng]}
-          // comment out icon to use default pin:
-          icon={makeIcon(categoryColor(artist.category))}
+          icon={makeRedIcon()}
           eventHandlers={{
             click: () => onArtistClick?.(artist),
           }}
@@ -87,9 +74,7 @@ export default function LeafletArtistsMap({
               <strong>{artist.name}</strong><br />
               <span>{artist.category}</span><br />
               <span>📍 {artist.city}, {artist.province}</span><br />
-              {artist.pricing && (
-                <small>From R{artist.pricing.hourly?.toLocaleString?.() ?? artist.pricing.hourly}</small>
-              )}
+              <span>👥 {artist.followers} followers</span>
             </div>
           </Popup>
         </Marker>

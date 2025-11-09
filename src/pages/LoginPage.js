@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import BackgroundAnimations from '../components/BackgroundAnimations';
+import authService from '../services/authService';
 import './LoginPage.css';
 
 const LoginPage = ({ onLogin }) => {
@@ -14,6 +15,19 @@ const LoginPage = ({ onLogin }) => {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [biometricMessage, setBiometricMessage] = useState('');
+  const [useBiometric, setUseBiometric] = useState(true); // Auto-enable for all devices
+  
+  useEffect(() => {
+    checkBiometricSupport();
+  }, []);
+
+  const checkBiometricSupport = async () => {
+    const result = await authService.checkBiometricSupport();
+    setBiometricAvailable(result.supported);
+    setBiometricMessage(result.message);
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -59,6 +73,38 @@ const LoginPage = ({ onLogin }) => {
     }
   };
 
+  const handleBiometricLogin = async () => {
+    setIsLoading(true);
+    try {
+      const result = await authService.authenticateWithBiometric();
+      
+      if (result.success) {
+        const user = {
+          id: Date.now(),
+          firstName: result.username.split('@')[0],
+          lastName: 'User',
+          email: result.username,
+          name: result.username.split('@')[0] + ' User',
+          username: result.username.split('@')[0],
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${result.username}`,
+          bio: 'Art enthusiast and creative supporter',
+          biometricEnabled: true
+        };
+        
+        actions.setUser(user);
+        actions.setAuthenticated(true);
+        
+        if (onLogin) {
+          onLogin();
+        }
+      }
+    } catch (error) {
+      setErrors({ general: error.message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -69,16 +115,55 @@ const LoginPage = ({ onLogin }) => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
       const user = {
         id: Date.now(),
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email
+        firstName: formData.firstName || formData.email.split('@')[0],
+        lastName: formData.lastName || 'User',
+        email: formData.email,
+        name: `${formData.firstName || formData.email.split('@')[0]} ${formData.lastName || 'User'}`,
+        username: formData.email.split('@')[0],
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.email}`,
+        bio: 'Art enthusiast and creative supporter'
       };
 
+      // Try secure authentication (optional, won't block if it fails)
+      try {
+        await authService.secureLogin(formData.email, formData.password);
+      } catch (secureError) {
+        console.log('Secure storage unavailable, using basic auth:', secureError.message);
+      }
+
+      // For NEW accounts, ALWAYS prompt for fingerprint registration if available
+      if (!isLogin && biometricAvailable) {
+        setIsLoading(false); // Stop loading to show prompt
+        
+        // Show alert explaining fingerprint registration
+        const shouldRegisterBiometric = window.confirm(
+          '🔐 Secure Your Account\n\n' +
+          'Would you like to enable fingerprint login?\n\n' +
+          'This allows you to login quickly and securely using your fingerprint instead of typing your password.\n\n' +
+          'Click OK to register your fingerprint now.'
+        );
+
+        if (shouldRegisterBiometric) {
+          setIsLoading(true);
+          try {
+            await authService.registerBiometric(
+              formData.email,
+              `${formData.firstName} ${formData.lastName}`
+            );
+            console.log('✅ Biometric authentication registered successfully!');
+            alert('✅ Fingerprint registered!\n\nYou can now login with your fingerprint or password.');
+          } catch (bioError) {
+            console.log('Biometric registration failed:', bioError.message);
+            alert('⚠️ Fingerprint registration failed.\n\nDon\'t worry - you can still login with your password.');
+          }
+        } else {
+          alert('ℹ️ Fingerprint skipped\n\nYou can login with your password. You can enable fingerprint login later in settings.');
+        }
+      }
+
+      // Set user and authenticate
       actions.setUser(user);
       actions.setAuthenticated(true);
       
@@ -87,6 +172,7 @@ const LoginPage = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Authentication error:', error);
+      setErrors({ general: 'Authentication failed. Please try again.' });
     } finally {
       setIsLoading(false);
     }
@@ -113,8 +199,8 @@ const LoginPage = ({ onLogin }) => {
           </h2>
           <p className="form-subtitle">
             {isLogin 
-              ? 'Already have an account? Sign in here' 
-              : 'Already have an account? Sign in here'
+              ? 'Sign in to continue your creative journey' 
+              : 'Join AfriKreate and support South African artists'
             }
           </p>
 
@@ -171,17 +257,53 @@ const LoginPage = ({ onLogin }) => {
               {errors.password && <span className="error-message">{errors.password}</span>}
             </div>
 
+            {errors.general && (
+              <div className="error-message general-error">
+                {errors.general}
+              </div>
+            )}
+
+            {biometricAvailable && !isLogin && (
+              <div className="biometric-info">
+                <p style={{
+                  textAlign: 'center',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '0.9rem',
+                  margin: '1rem 0',
+                  padding: '0.8rem',
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(139, 92, 246, 0.3)'
+                }}>
+                  🔐 Fingerprint login will be set up after you create your account
+                </p>
+              </div>
+            )}
+
             <button 
               type="submit" 
-              className="submit-btn"
+              className={`submit-button ${isLoading ? 'loading' : ''}`}
               disabled={isLoading}
             >
-              {isLoading ? (
-                <div className="loading-spinner"></div>
-              ) : (
-                isLogin ? 'Sign In' : 'Sign Up'
-              )}
+              {isLoading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
             </button>
+
+            {biometricAvailable && isLogin && (
+              <>
+                <div className="divider">
+                  <span>OR</span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={handleBiometricLogin}
+                  className="biometric-button"
+                  disabled={isLoading}
+                >
+                  <span className="fingerprint-icon">👆</span>
+                  Sign in with Biometric
+                </button>
+              </>
+            )}
           </form>
 
           <div className="toggle-form">

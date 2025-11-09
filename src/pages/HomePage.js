@@ -2,14 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import BlogModal from '../components/BlogModal';
 import BackgroundAnimations from '../components/BackgroundAnimations';
+import Navbar from '../components/Navbar';
+import RotatingBanner from '../components/RotatingBanner';
+import MissionStatement from '../components/MissionStatement';
+import CryptoMarket from '../components/CryptoMarket';
+import CryptoNewsTicker from '../components/CryptoNewsTicker';
+import QuizPlayer from '../components/QuizPlayer';
+import LearnModal from '../components/LearnModal';
+import TopPerformingCarousel from '../components/TopPerformingCarousel';
+import TopNFTArtworks from '../components/TopNFTArtworks';
+import useScrollReveal from '../hooks/useScrollReveal';
 import { blogContent } from '../data/blogContent';
+import { learnTopics } from '../data/learnContent';
 import './HomePage.css';
 
-const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNavigateToUserProfile }) => {
+const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNavigateToUserProfile, onNavigateToFeed, onNavigateToHome, onLogout }) => {
   const { state, actions } = useAppContext();
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
   const [categories, setCategories] = useState([]);
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [selectedLearnTopic, setSelectedLearnTopic] = useState(null);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [selectedQuizTopic, setSelectedQuizTopic] = useState(null);
+  const [showCertificateToast, setShowCertificateToast] = useState(false);
+
+  // Scroll to top and prevent body scroll when modal opens
+  useEffect(() => {
+    if (selectedLearnTopic || selectedQuiz || selectedBlog) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedLearnTopic, selectedQuiz, selectedBlog]);
 
   useEffect(() => {
     // Organize all kreatives by categories (no filtering by preferences)
@@ -59,6 +87,23 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
 
   const recommendedKreatives = getRecommendedKreatives();
 
+  // Get top 10 performing kreatives by followers
+  const getTopKreatives = () => {
+    const parseFollowerCount = (followers) => {
+      if (typeof followers === 'string') {
+        const num = parseFloat(followers.replace('k', '').replace('K', ''));
+        return num * 1000;
+      }
+      return followers;
+    };
+
+    return [...state.kreatives]
+      .sort((a, b) => parseFollowerCount(b.followers) - parseFollowerCount(a.followers))
+      .slice(0, 10);
+  };
+
+  const topKreatives = getTopKreatives();
+
   const handleFavorite = (kreative) => {
     const isFavorited = state.favorites.some(fav => fav.id === kreative.id);
     if (isFavorited) {
@@ -68,52 +113,30 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
     }
   };
 
-  const cryptoPartners = [
-    { name: 'Ethereum', symbol: 'ETH', logo: '⟠' },
-    { name: 'Solana', symbol: 'SOL', logo: '◎' },
-    { name: 'Bitcoin', symbol: 'BTC', logo: '₿' },
-    { name: 'Polygon', symbol: 'MATIC', logo: '⬟' },
-    { name: 'Cardano', symbol: 'ADA', logo: '₳' },
-    { name: 'Binance', symbol: 'BNB', logo: '⬡' },
-    { name: 'Avalanche', symbol: 'AVAX', logo: '▲' },
-    { name: 'Tezos', symbol: 'XTZ', logo: 'ꜩ' },
-    { name: 'Polkadot', symbol: 'DOT', logo: '●' }
-  ];
+  const handleQuizComplete = (certificate) => {
+    setShowCertificateToast(true);
+    setTimeout(() => setShowCertificateToast(false), 5000);
+  };
 
   return (
     <div className="home-container">
       <BackgroundAnimations intensity="light" theme="purple" />
-      {/* Header */}
-      <header className="home-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <img 
-              src={process.env.PUBLIC_URL + "/images/logo-new/Afrikreate Logo Transparant.png"}
-              alt="AfriKreate Logo" 
-              className="header-logo"
-              onLoad={() => console.log('✅ Logo loaded successfully from:', process.env.PUBLIC_URL + "/images/logo-new/Afrikreate Logo Transparant.png")}
-              onError={(e) => {
-                console.error('❌ Logo failed to load from:', e.target.src);
-              }}
-            />
-          </div>
-          
-          <nav className="main-nav">
-            <button className="nav-btn icon-btn" onClick={onNavigateToExplore} title="Explore">
-              🔍
-            </button>
-            <button className="nav-btn icon-btn" onClick={onNavigateToEvents} title="Events">
-              📅
-            </button>
-            <button className="nav-btn icon-btn" onClick={() => alert('Favourites feature coming soon!')} title="Favourites">
-              ❤️
-            </button>
-            <button className="nav-btn icon-btn" onClick={onNavigateToUserProfile} title="Profile">
-              👤
-            </button>
-          </nav>
-        </div>
-      </header>
+      
+      {/* Navigation Bar */}
+      <Navbar 
+        onNavigateToHome={onNavigateToHome}
+        onNavigateToExplore={onNavigateToExplore}
+        onNavigateToEvents={onNavigateToEvents}
+        onNavigateToFeed={onNavigateToFeed}
+        onNavigateToUserProfile={onNavigateToUserProfile}
+        onLogout={onLogout}
+      />
+
+      {/* Rotating Banner */}
+      <RotatingBanner />
+
+      {/* Mission Statement */}
+      <MissionStatement />
 
       {/* Hero Section with Featured Kreatives */}
       <section className="hero-section">
@@ -128,6 +151,16 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
             {(recommendedKreatives.length > 0 ? recommendedKreatives : state.kreatives).length > 0 ? (
               <>
                 <div className="carousel-wrapper">
+                  <button 
+                    className="carousel-arrow carousel-arrow-left"
+                    onClick={() => setCurrentCarouselIndex((prev) => {
+                      const displayKreatives = recommendedKreatives.length > 0 ? recommendedKreatives : state.kreatives;
+                      return (prev - 1 + displayKreatives.length) % displayKreatives.length;
+                    })}
+                    aria-label="Previous kreative"
+                  >
+                    ◀
+                  </button>
                   <div className="carousel-items">
                     {[-1, 0, 1].map((offset) => {
                       const displayKreatives = recommendedKreatives.length > 0 ? recommendedKreatives : state.kreatives;
@@ -161,6 +194,16 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
                       );
                     })}
                   </div>
+                  <button 
+                    className="carousel-arrow carousel-arrow-right"
+                    onClick={() => setCurrentCarouselIndex((prev) => {
+                      const displayKreatives = recommendedKreatives.length > 0 ? recommendedKreatives : state.kreatives;
+                      return (prev + 1) % displayKreatives.length;
+                    })}
+                    aria-label="Next kreative"
+                  >
+                    ▶
+                  </button>
                   <div className="carousel-dots">
                     {state.kreatives.map((_, index) => (
                       <button
@@ -183,6 +226,12 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
           </div>
         </div>
       </section>
+
+      {/* Top Performing Kreatives Carousel */}
+      <TopPerformingCarousel 
+        kreatives={topKreatives}
+        onArtistClick={onArtistClick}
+      />
 
       {/* All AfriKreatives Section */}
       <section className="categories-section">
@@ -217,29 +266,24 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
           </div>
       </section>
 
-      {/* Crypto Partners Section */}
-      <section className="crypto-section">
-        <div className="crypto-content">
-          <h3 className="section-title">Supported Crypto Wallets</h3>
-          <p className="section-subtitle">Invest in creativity with secure blockchain technology</p>
-          
-          <div className="crypto-partners">
-            {cryptoPartners.map((partner) => (
-              <div key={partner.symbol} className="crypto-card">
-                <div className="crypto-logo">{partner.logo}</div>
-                <h4 className="crypto-name">{partner.name}</h4>
-                <p className="crypto-symbol">{partner.symbol}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Crypto Market Section */}
+      <section className="crypto-market-section">
+        <CryptoMarket />
       </section>
+
+      {/* Crypto News Ticker */}
+      <section className="crypto-news-section">
+        <CryptoNewsTicker />
+      </section>
+
+      {/* Top 10 NFT Artworks */}
+      <TopNFTArtworks />
 
       {/* Educational Resources Section */}
       <section className="education-section">
         <div className="education-content">
           <h3 className="section-title">Learn About Blockchain & Art</h3>
-          <p className="section-subtitle">Educational resources to help you understand the future of creative investment</p>
+          <p className="section-subtitle">Educational resources and interactive quizzes to help you understand the future of creative investment</p>
           
           <div className="education-grid">
             <article className="education-card">
@@ -247,14 +291,26 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
                 <div className="placeholder-image">📚</div>
               </div>
               <div className="education-content-text">
-                <h4>What is Blockchain Art?</h4>
-                <p>Learn how blockchain technology is revolutionizing the art world and creating new opportunities for artists and collectors.</p>
-                <button 
-                  className="read-more-btn"
-                  onClick={() => setSelectedBlog(blogContent['blockchain-art'])}
-                >
-                  Read More
-                </button>
+                <h4>{learnTopics[0].title}</h4>
+                <p>{learnTopics[0].summary}</p>
+                <div className="education-actions">
+                  <button 
+                    className="read-more-btn"
+                    onClick={() => setSelectedLearnTopic(learnTopics[0])}
+                  >
+                    📖 Learn & Watch Videos
+                  </button>
+                  <button 
+                    className="quiz-btn"
+                    onClick={() => {
+                      setSelectedQuizTopic(learnTopics[0]);
+                      setSelectedQuiz(learnTopics[0].quiz);
+                    }}
+                  >
+                    🎓 Take Quiz
+                  </button>
+                </div>
+                <span className="duration-badge">⏱️ {learnTopics[0].duration}</span>
               </div>
             </article>
             
@@ -263,30 +319,54 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
                 <div className="placeholder-image">💎</div>
               </div>
               <div className="education-content-text">
-                <h4>Investing in Creative Assets</h4>
-                <p>Discover how to support artists while building a valuable portfolio of creative works and intellectual property.</p>
-                <button 
-                  className="read-more-btn"
-                  onClick={() => setSelectedBlog(blogContent['investing-creative'])}
-                >
-                  Read More
-                </button>
+                <h4>{learnTopics[1].title}</h4>
+                <p>{learnTopics[1].summary}</p>
+                <div className="education-actions">
+                  <button 
+                    className="read-more-btn"
+                    onClick={() => setSelectedLearnTopic(learnTopics[1])}
+                  >
+                    📖 Learn & Watch Videos
+                  </button>
+                  <button 
+                    className="quiz-btn"
+                    onClick={() => {
+                      setSelectedQuizTopic(learnTopics[1]);
+                      setSelectedQuiz(learnTopics[1].quiz);
+                    }}
+                  >
+                    🎓 Take Quiz
+                  </button>
+                </div>
+                <span className="duration-badge">⏱️ {learnTopics[1].duration}</span>
               </div>
             </article>
             
             <article className="education-card">
               <div className="education-image">
-                <div className="placeholder-image">🌍</div>
+                <div className="placeholder-image">📜</div>
               </div>
               <div className="education-content-text">
-                <h4>Supporting African Creativity</h4>
-                <p>Learn about the impact of supporting local artists and how AfriKreate is building a sustainable creative economy.</p>
-                <button 
-                  className="read-more-btn"
-                  onClick={() => setSelectedBlog(blogContent['supporting-african'])}
-                >
-                  Read More
-                </button>
+                <h4>{learnTopics[2].title}</h4>
+                <p>{learnTopics[2].summary}</p>
+                <div className="education-actions">
+                  <button 
+                    className="read-more-btn"
+                    onClick={() => setSelectedLearnTopic(learnTopics[2])}
+                  >
+                    📖 Learn & Watch Videos
+                  </button>
+                  <button 
+                    className="quiz-btn"
+                    onClick={() => {
+                      setSelectedQuizTopic(learnTopics[2]);
+                      setSelectedQuiz(learnTopics[2].quiz);
+                    }}
+                  >
+                    🎓 Take Quiz
+                  </button>
+                </div>
+                <span className="duration-badge">⏱️ {learnTopics[2].duration}</span>
               </div>
             </article>
           </div>
@@ -295,32 +375,9 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
 
       {/* Footer */}
       <footer className="home-footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <img 
-              src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
-              alt="AfriKreate Logo" 
-              className="footer-logo"
-              onError={(e) => {
-                console.log('Logo failed to load from:', e.target.src);
-                e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
-              }}
-            />
-            <p>Empowering South African creativity through blockchain technology</p>
-          </div>
-          
-          <div className="footer-section">
-            <h4>Follow Us</h4>
-            <div className="social-links">
-              <a href="#" className="social-link">Instagram</a>
-              <a href="#" className="social-link">TikTok</a>
-              <a href="#" className="social-link">Twitter/X</a>
-            </div>
-          </div>
-        </div>
-        
-        <div className="footer-bottom">
-          <p>© 2025, AfriKreate – Powered by Ligoody2Shoes</p>
+        <div className="footer-content-centered">
+          <p className="footer-text">Empowering South African creativity through blockchain technology</p>
+          <p className="footer-copyright">© 2025, AfriKreate – Powered by Ligoody2Shoes</p>
         </div>
       </footer>
 
@@ -330,6 +387,46 @@ const HomePage = ({ onNavigateToExplore, onArtistClick, onNavigateToEvents, onNa
           blog={selectedBlog} 
           onClose={() => setSelectedBlog(null)} 
         />
+      )}
+
+      {/* Learn Modal */}
+      {selectedLearnTopic && (
+        <LearnModal
+          topic={selectedLearnTopic}
+          onClose={() => setSelectedLearnTopic(null)}
+          onStartQuiz={(quiz) => {
+            setSelectedQuizTopic(selectedLearnTopic);
+            setSelectedQuiz(quiz);
+            setSelectedLearnTopic(null);
+          }}
+        />
+      )}
+
+      {/* Quiz Modal */}
+      {selectedQuiz && (
+        <div className="quiz-modal-overlay" onClick={() => {
+          setSelectedQuiz(null);
+          setSelectedQuizTopic(null);
+        }}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <QuizPlayer
+              quiz={selectedQuiz}
+              topicId={selectedQuizTopic?.id || 'general'}
+              onComplete={handleQuizComplete}
+              onClose={() => {
+                setSelectedQuiz(null);
+                setSelectedQuizTopic(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Certificate Toast */}
+      {showCertificateToast && (
+        <div className="certificate-toast">
+          🎉 Certificate earned! Check your profile to view it.
+        </div>
       )}
     </div>
   );

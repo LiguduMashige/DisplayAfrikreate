@@ -2,7 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAppContext } from '../context/AppContext';
 import LeafletArtistsMap from '../components/LeafletArtistsMap';
 import BackgroundAnimations from '../components/BackgroundAnimations';
+import Navbar from '../components/Navbar';
 import { parseLocation } from '../utils/locationParser';
+import { formatAddressForDisplay } from '../utils/addressUtils';
 import './ExplorePage.css';
 
 // Utility functions
@@ -36,7 +38,7 @@ const cityAliases = {
   'tshwane': 'Pretoria'
 };
 
-const ExplorePage = ({ onBack }) => {
+const ExplorePage = ({ onBack, onNavigateToHome, onNavigateToExplore, onNavigateToEvents, onNavigateToFeed, onNavigateToUserProfile, onArtistClick, onLogout }) => {
   const { state } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -47,6 +49,8 @@ const ExplorePage = ({ onBack }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   // Parse locations from kreatives.json and add pricing (memoized to prevent regeneration)
   const kreativesWithLocations = useMemo(() => {
     return state.kreatives.map((kreative) => {
@@ -58,6 +62,8 @@ const ExplorePage = ({ onBack }) => {
         ...jitteredCoords,
         city: locationData.city,
         province: locationData.province,
+        displayAddress: formatAddressForDisplay(kreative.location),
+        fullAddress: kreative.location, // Keep for map/backend
         pricing: generatePricing()
       };
     });
@@ -89,7 +95,58 @@ const ExplorePage = ({ onBack }) => {
       // Show all artists by default on map
       setFilteredKreatives(kreativesWithLocations);
     }
-  }, [searchQuery, selectedCategory, locationFilter, state.kreatives]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, selectedCategory, locationFilter, kreativesWithLocations]);
+
+  const generateSuggestions = (query) => {
+    if (!query || query.trim() === '') {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const suggestionSet = new Set();
+
+    // Add matching artist names
+    kreativesWithLocations.forEach(k => {
+      if (k.name.toLowerCase().includes(lowerQuery)) {
+        suggestionSet.add({ type: 'artist', value: k.name, data: k });
+      }
+    });
+
+    // Add matching categories
+    categories.forEach(cat => {
+      if (cat !== 'all' && cat.toLowerCase().includes(lowerQuery)) {
+        suggestionSet.add({ type: 'category', value: cat });
+      }
+    });
+
+    // Add matching cities
+    locations.forEach(city => {
+      if (city.toLowerCase().includes(lowerQuery)) {
+        suggestionSet.add({ type: 'location', value: city });
+      }
+    });
+
+    setSuggestions(Array.from(suggestionSet).slice(0, 8));
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    if (suggestion.type === 'artist') {
+      setSearchQuery(suggestion.value);
+      setSelectedKreative(suggestion.data);
+    } else if (suggestion.type === 'category') {
+      setSelectedCategory(suggestion.value);
+      setSearchQuery('');
+    } else if (suggestion.type === 'location') {
+      setLocationFilter(suggestion.value);
+      setSearchQuery('');
+    }
+    setShowSuggestions(false);
+    setHasSearched(true);
+  };
 
   const filterKreatives = () => {
     let filtered = kreativesWithLocations;
@@ -178,25 +235,16 @@ const ExplorePage = ({ onBack }) => {
   return (
     <div className="explore-container">
       <BackgroundAnimations intensity="light" theme="purple" />
-      {/* Header */}
-      <header className="explore-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <img
-              src={`${process.env.PUBLIC_URL}/images/logo-new/Afrikreate Logo Transparant.png`}
-              alt="AfriKreate Logo"
-              className="header-logo"
-              onError={(e) => {
-                console.log('Logo failed to load from:', e.target.src);
-                e.target.src = "/images/logo-new/Afrikreate Logo Transparant.png";
-              }}
-            />
-          </div>
-          <button className="back-btn" onClick={onBack}>
-            ← Back
-          </button>
-        </div>
-      </header>
+      
+      <Navbar 
+        onNavigateToHome={onNavigateToHome}
+        onNavigateToExplore={onNavigateToExplore}
+        onNavigateToEvents={onNavigateToEvents}
+        onNavigateToFeed={onNavigateToFeed}
+        onNavigateToUserProfile={onNavigateToUserProfile}
+        onLogout={onLogout}
+      />
+      
 
       <div className="explore-content">
         {/* Search and Filters Section */}
@@ -208,13 +256,37 @@ const ExplorePage = ({ onBack }) => {
                 type="text"
                 placeholder="Search for artists, categories, or locations..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  generateSuggestions(e.target.value);
+                }}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                onFocus={() => searchQuery && setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 className="search-input"
               />
               <button className="search-btn" onClick={handleSearch}>🔍</button>
               {hasSearched && (
                 <button className="clear-btn" onClick={handleClearSearch}>✕</button>
+              )}
+              
+              {/* Auto-suggestions */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="suggestions-dropdown">
+                  {suggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="suggestion-item"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      <span className="suggestion-icon">
+                        {suggestion.type === 'artist' ? '👤' : suggestion.type === 'category' ? '🎨' : '📍'}
+                      </span>
+                      <span className="suggestion-text">{suggestion.value}</span>
+                      <span className="suggestion-type">{suggestion.type}</span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 
@@ -317,31 +389,9 @@ const ExplorePage = ({ onBack }) => {
           <div className="results-section">
             {!hasSearched ? (
               <div className="no-search-state">
-                <div className="search-illustration">
-                  🎨
-                </div>
-                <h3>Start Your Creative Journey</h3>
-                <p>Search for artists, filter by category, or select a location to discover talented kreatives across South Africa.</p>
-                <div className="quick-filters">
-                  <button
-                    className="quick-filter-btn"
-                    onClick={() => { setSelectedCategory('digital artist'); setHasSearched(true); }}
-                  >
-                    Digital Artists
-                  </button>
-                  <button
-                    className="quick-filter-btn"
-                    onClick={() => { setSelectedCategory('photographer'); setHasSearched(true); }}
-                  >
-                    Photographers
-                  </button>
-                  <button
-                    className="quick-filter-btn"
-                    onClick={() => { setLocationFilter('Cape Town'); setHasSearched(true); }}
-                  >
-                    Cape Town
-                  </button>
-                </div>
+                <div className="search-illustration">🎨</div>
+                <h3>Discover South African Kreatives</h3>
+                <p>Use the search bar and filters above to find talented artists across South Africa.</p>
               </div>
             ) : (
               <div className="results-list">
@@ -358,7 +408,7 @@ const ExplorePage = ({ onBack }) => {
                       <div className="result-info">
                         <h4>{kreative.name}</h4>
                         <p className="result-category">{kreative.category}</p>
-                        <p className="result-location">📍 {kreative.city}, {kreative.province}</p>
+                        <p className="result-location">📍 {kreative.displayAddress}</p>
                         <p className="result-followers">👥 {kreative.followers} followers</p>
                       </div>
                     </div>
@@ -389,14 +439,19 @@ const ExplorePage = ({ onBack }) => {
               <div className="popup-info">
                 <h3>{selectedKreative.name}</h3>
                 <p className="popup-category">{selectedKreative.category}</p>
-                <p className="popup-location">📍 {selectedKreative.city}, {selectedKreative.province}</p>
+                <p className="popup-location">📍 {selectedKreative.displayAddress}</p>
                 <p className="popup-followers">👥 {selectedKreative.followers} followers</p>
               </div>
             </div>
             <div className="popup-description">
               <p>{selectedKreative.description.substring(0, 200)}...</p>
             </div>
-            <button className="view-profile-btn">View Full Profile</button>
+            <button 
+              className="view-profile-btn"
+              onClick={() => onArtistClick(selectedKreative)}
+            >
+              View Full Profile
+            </button>
           </div>
         </div>
       )}

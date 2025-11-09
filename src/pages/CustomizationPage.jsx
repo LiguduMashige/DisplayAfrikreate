@@ -21,28 +21,10 @@ const CustomizationPage = ({ onComplete }) => {
       description: 'Traditional paintings, drawings, and mixed media'
     },
     {
-      id: 'music-sound',
-      name: 'Music & Sound',
-      icon: '🎵',
-      description: 'Music production, sound design, and audio art'
-    },
-    {
-      id: 'crafts-textiles',
-      name: 'Crafts & Textiles',
-      icon: '🧵',
-      description: 'Handmade crafts, textile art, and fiber arts'
-    },
-    {
       id: 'photography',
       name: 'Photography',
       icon: '📸',
       description: 'Portrait, landscape, and artistic photography'
-    },
-    {
-      id: 'animation',
-      name: 'Animation',
-      icon: '🎬',
-      description: '2D/3D animation, motion graphics, and video art'
     },
     {
       id: 'graphic-design',
@@ -51,22 +33,10 @@ const CustomizationPage = ({ onComplete }) => {
       description: 'Logo design, branding, and visual communication'
     },
     {
-      id: 'sculpture',
-      name: 'Sculpture',
-      icon: '🗿',
-      description: 'Traditional and contemporary sculptural works'
-    },
-    {
-      id: 'writing',
-      name: 'Writing & Poetry',
-      icon: '✍️',
-      description: 'Creative writing, poetry, and literary arts'
-    },
-    {
-      id: 'performance',
-      name: 'Performance Art',
-      icon: '🎭',
-      description: 'Live performances, theater, and interactive art'
+      id: 'animation',
+      name: 'Animation',
+      icon: '🎬',
+      description: '2D/3D animation, motion graphics, and video art'
     }
   ];
 
