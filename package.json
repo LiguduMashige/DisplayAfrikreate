@@ -2,7 +2,7 @@
   "name": "afrikreate",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://LiguduMashige.github.io/ExhibitionApp",
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/interaction": "^6.1.19",
